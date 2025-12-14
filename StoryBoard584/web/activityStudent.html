@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University Club | Activities</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        :root {
+            --primary: #8B0000; --primary-dark: #660000; --primary-light: #B22222;
+            --surface: #ffffff; --surface-light: #f8f9fa; --surface-dark: #f1f3f5;
+            --text: #1a1a1a; --text-light: #666666; --border: #e0e0e0;
+            --shadow: 0 8px 30px rgba(0,0,0,0.08); --radius: 12px;
+        }
+        body { background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); color: var(--text); min-height: 100vh; }
+        
+        .app-container { 
+            display: grid; 
+            grid-template-columns: 220px 1fr; 
+            grid-template-rows: 70px 1fr; 
+            min-height: 100vh; 
+        }
+        
+        /* Header */
+        .header { 
+            grid-column: 1 / -1; 
+            background: var(--surface);
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            padding: 0 24px; 
+            border-bottom: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            animation: slideDown 0.5s ease-out;
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .logo-container { display: flex; align-items: center; gap: 12px; }
+        .logo-icon {
+            width: 36px; height: 36px; background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 8px; display: flex; align-items: center; justify-content: center;
+            color: white; font-weight: 800; font-size: 16px;
+            box-shadow: 0 4px 15px rgba(139, 0, 0, 0.2); animation: pulse 2s infinite alternate;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 4px 15px rgba(139, 0, 0, 0.2); }
+            100% { box-shadow: 0 4px 20px rgba(139, 0, 0, 0.3); }
+        }
+        .logo-text { display: flex; flex-direction: column; }
+        .logo-main { font-size: 18px; font-weight: 800; color: var(--text); }
+        .logo-main span { color: var(--primary); }
+        .logo-sub { font-size: 10px; color: var(--text-light); letter-spacing: 1px; font-weight: 500; }
+        .user-profile { display: flex; align-items: center; gap: 15px; }
+        .profile-badge {
+            display: flex; align-items: center; gap: 10px; padding: 6px 16px;
+            background: var(--surface-light); border-radius: 50px; border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+        .profile-badge:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .profile-avatar {
+            width: 36px; height: 36px; background: linear-gradient(135deg, var(--primary), #000);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            color: white; font-weight: 700; font-size: 14px;
+        }
+        .logout-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white;
+            border: none; padding: 8px 20px; border-radius: 6px; cursor: pointer;
+            font-weight: 600; font-size: 13px; transition: all 0.3s ease;
+        }
+        .logout-btn:hover {
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            transform: translateY(-2px); box-shadow: 0 4px 15px rgba(139,0,0,0.25);
+        }
+        
+        /* Sidebar */
+        .sidebar { 
+            background: var(--surface); padding: 24px 0; border-right: 1px solid var(--border);
+            animation: slideInLeft 0.6s ease-out;
+        }
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .nav-section { margin-bottom: 20px; }
+        .section-label {
+            padding: 0 16px 8px; font-size: 10px; color: var(--text-light);
+            text-transform: uppercase; letter-spacing: 1px; font-weight: 600;
+        }
+        .nav-item { 
+            padding: 12px 16px; color: var(--text-light); display: flex; align-items: center; 
+            gap: 12px; cursor: pointer; transition: all 0.3s ease; margin: 2px 8px; border-radius: 8px;
+            animation: fadeInUp 0.5s ease-out forwards; opacity: 0;
+        }
+        .nav-item:nth-child(1) { animation-delay: 0.1s; }
+        .nav-item:nth-child(2) { animation-delay: 0.2s; }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .nav-item:hover { 
+            background: rgba(139, 0, 0, 0.05); color: var(--primary); transform: translateX(5px);
+        }
+        .nav-item.active { 
+            background: rgba(139, 0, 0, 0.08); color: var(--primary); font-weight: 600;
+            border-left: 3px solid var(--primary);
+        }
+        .nav-icon { width: 18px; text-align: center; color: var(--text-light); }
+        .nav-item:hover .nav-icon, .nav-item.active .nav-icon { color: var(--primary); }
+        
+        /* Main Content - CENTERED */
+        .main-content { 
+            padding: 24px; 
+            overflow-y: auto; 
+            background: var(--surface-dark); 
+            animation: fadeIn 0.8s ease-out;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Center everything horizontally */
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .welcome-section { 
+            margin-bottom: 30px; 
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+            text-align: center; /* Center text */
+            width: 100%;
+            max-width: 1200px; /* Limit width for better centering */
+        }
+        .welcome-title { font-size: 26px; font-weight: 800; color: var(--text); margin-bottom: 6px; }
+        .welcome-title span { color: var(--primary); position: relative; }
+        .welcome-title span::after {
+            content: ''; position: absolute; bottom: -5px; left: 0; width: 100%; height: 3px;
+            background: linear-gradient(90deg, var(--primary), transparent); border-radius: 2px;
+        }
+        .welcome-subtitle { color: var(--text-light); font-size: 14px; font-weight: 400; }
+        
+        /* Activity Stats - CENTERED */
+        .activity-stats {
+            display: flex; 
+            gap: 16px; 
+            margin-bottom: 24px; 
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+            justify-content: center; /* Center stats */
+            width: 100%;
+            max-width: 1200px;
+        }
+        .activity-stat {
+            background: var(--surface); 
+            padding: 16px; 
+            border-radius: var(--radius);
+            border: 1px solid var(--border); 
+            min-width: 140px; 
+            flex: 1;
+            max-width: 180px;
+            transition: all 0.3s ease;
+            position: relative; 
+            overflow: hidden;
+            text-align: center; /* Center stat content */
+        }
+        .activity-stat::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+        }
+        .activity-stat:hover { transform: translateY(-5px); box-shadow: var(--shadow); }
+        .activity-stat .value { font-size: 24px; font-weight: 800; color: var(--primary); margin-bottom: 4px; }
+        .activity-stat .label { font-size: 12px; color: var(--text-light); }
+        
+        /* Activities Grid - CENTERED */
+        .activities-section { 
+            background: var(--surface); 
+            border-radius: 16px; 
+            padding: 24px; 
+            border: 1px solid var(--border); 
+            box-shadow: var(--shadow);
+            animation: fadeInUp 0.8s ease-out 0.6s both;
+            width: 100%;
+            max-width: 1200px; /* Limit width for better centering */
+        }
+        .section-title { 
+            font-size: 20px; 
+            font-weight: 700; 
+            margin-bottom: 20px; 
+            padding-bottom: 12px; 
+            border-bottom: 1px solid var(--border); 
+            color: var(--text); 
+            position: relative;
+            text-align: center; /* Center title */
+        }
+        .section-title::after {
+            content: ''; 
+            position: absolute; 
+            bottom: -1px; 
+            left: 50%; 
+            transform: translateX(-50%); /* Center the underline */
+            width: 60px; 
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light)); 
+            border-radius: 2px;
+        }
+        .activities-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
+            gap: 20px; 
+            justify-items: center; /* Center grid items */
+        }
+        
+        /* Activity Cards - IMPROVED LAYOUT */
+        .activity-card { 
+            background: var(--surface); 
+            padding: 24px; 
+            border-radius: 12px; 
+            border: 1px solid var(--border); 
+            transition: all 0.4s ease; 
+            position: relative;
+            overflow: hidden; 
+            opacity: 0; 
+            transform: translateY(20px); 
+            animation: fadeInUp 0.6s ease-out forwards;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            min-height: 320px;
+            width: 100%; /* Full width of grid cell */
+            max-width: 350px; /* Limit card width */
+        }
+        .activity-card:nth-child(1) { animation-delay: 0.1s; }
+        .activity-card:nth-child(2) { animation-delay: 0.2s; }
+        .activity-card:nth-child(3) { animation-delay: 0.3s; }
+        .activity-card:nth-child(4) { animation-delay: 0.4s; }
+        .activity-card:hover { transform: translateY(-8px); box-shadow: var(--shadow); border-color: rgba(139,0,0,0.2); }
+        
+        .activity-header { 
+            display: flex; 
+            flex-direction: column; /* Stack title and status */
+            align-items: center; /* Center header content */
+            margin-bottom: 20px;
+            text-align: center; /* Center text */
+        }
+        .activity-title { 
+            font-size: 20px; 
+            font-weight: 700; 
+            color: var(--text); 
+            margin-bottom: 10px;
+            line-height: 1.3;
+            text-align: center;
+            width: 100%;
+        }
+        .activity-status { 
+            background: linear-gradient(135deg, var(--primary), #000); 
+            color: white; 
+            padding: 6px 16px; 
+            border-radius: 20px; 
+            font-size: 11px; 
+            font-weight: 600; 
+            text-transform: uppercase;
+            letter-spacing: 0.5px; 
+            animation: pulse 2s infinite;
+        }
+        .activity-status.upcoming { background: linear-gradient(135deg, #4CAF50, #2E7D32); }
+        .activity-status.ongoing { background: linear-gradient(135deg, #FF9800, #F57C00); animation: pulse 1.5s infinite; }
+        
+        .activity-details { 
+            color: var(--text-light); 
+            font-size: 14px; 
+            line-height: 1.6; 
+            margin-bottom: 16px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .activity-details p { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            padding: 4px 0;
+        }
+        .detail-label { 
+            font-weight: 500; 
+            color: var(--text-light);
+            flex-basis: 40%; /* Consistent label width */
+        }
+        .detail-value { 
+            color: var(--text); 
+            font-weight: 600; 
+            font-size: 14px;
+            text-align: right;
+            flex-basis: 60%; /* Consistent value width */
+        }
+        
+        .activity-description {
+            margin-top: 16px; 
+            padding-top: 16px; 
+            border-top: 1px solid var(--border);
+            color: var(--text-light); 
+            font-size: 13px; 
+            line-height: 1.5;
+            text-align: center; /* Center description text */
+            flex-shrink: 0;
+        }
+        
+        .activity-actions { 
+            display: flex; 
+            gap: 12px; 
+            margin-top: 20px;
+            justify-content: center; /* Center buttons */
+        }
+        .action-btn {
+            padding: 10px 20px; 
+            border: none; 
+            border-radius: 8px; 
+            font-weight: 600; 
+            font-size: 13px;
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+            min-width: 120px; /* Consistent button width */
+            text-align: center;
+        }
+        .action-btn.register {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark)); 
+            color: white;
+        }
+        .action-btn.register:hover {
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            transform: translateY(-2px); 
+            box-shadow: 0 4px 15px rgba(139,0,0,0.25);
+        }
+        .action-btn.details {
+            background: transparent; 
+            color: var(--primary); 
+            border: 1px solid var(--primary);
+        }
+        .action-btn.details:hover { 
+            background: rgba(139,0,0,0.05); 
+            transform: translateY(-2px); 
+        }
+        .action-btn.registered {
+            background: linear-gradient(135deg, #4CAF50, #2E7D32); 
+            color: white; 
+            cursor: default;
+            min-width: 140px;
+        }
+        
+        /* Modal */
+        .modal { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); display: flex; 
+            justify-content: center; align-items: center; z-index: 1000; 
+            visibility: hidden; opacity: 0; transition: all 0.3s ease;
+        }
+        .modal.active { visibility: visible; opacity: 1; }
+        .modal-content { 
+            background: var(--surface); padding: 30px; border-radius: 16px; 
+            max-width: 450px; width: 90%; border: 1px solid var(--border); box-shadow: var(--shadow);
+            transform: translateY(20px); transition: transform 0.3s ease;
+            text-align: center; /* Center modal content */
+        }
+        .modal.active .modal-content { transform: translateY(0); }
+        .modal-icon {
+            width: 50px; height: 50px; background: linear-gradient(135deg, rgba(139,0,0,0.1), rgba(0,0,0,0.05));
+            border-radius: 12px; display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 16px; color: var(--primary); font-size: 24px;
+            animation: bounce 1s infinite alternate;
+        }
+        @keyframes bounce { 0% { transform: translateY(0); } 100% { transform: translateY(-8px); } }
+        .modal-title { font-size: 20px; font-weight: 700; margin-bottom: 10px; color: var(--text); }
+        .modal-text { color: var(--text-light); font-size: 14px; line-height: 1.5; margin-bottom: 16px; }
+        .modal-buttons { display: flex; gap: 12px; justify-content: center; margin-top: 20px; }
+        .modal-btn { padding: 10px 20px; border: none; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.3s ease; }
+        .modal-btn.confirm { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; }
+        .modal-btn.confirm:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(139,0,0,0.25); }
+        .modal-btn.cancel { background: transparent; color: var(--text-light); border: 1px solid var(--border); }
+        .modal-btn.cancel:hover { background: var(--surface-light); border-color: var(--text-light); }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .app-container { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+            .sidebar { display: none; }
+            .activities-grid { grid-template-columns: 1fr; }
+            .header { padding: 16px; flex-direction: column; gap: 12px; height: auto; }
+            .user-profile { width: 100%; justify-content: space-between; }
+            .activity-card { min-height: 300px; max-width: 100%; }
+            .activity-actions { flex-direction: column; }
+            .action-btn { min-width: 100%; }
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--surface); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #ccc; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo-container">
+                <div class="logo-icon">U</div>
+                <div class="logo-text">
+                    <div class="logo-main">University<span>Club</span></div>
+                    <div class="logo-sub">ACTIVITIES DASHBOARD</div>
+                </div>
+            </div>
+            <div class="user-profile">
+                <div class="profile-badge">
+                    <div class="profile-avatar">JD</div>
+                </div>
+                <button class="logout-btn" onclick="document.getElementById('logoutModal').classList.add('active')">Sign Out</button>
+            </div>
+        </header>
+        
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="nav-section">
+                <div class="section-label">Navigation</div>
+                <div class="nav-item">
+                    <div class="nav-icon">📊</div>
+                    <span>Dashboard</span>
+                </div>
+                <div class="nav-item active">
+                    <div class="nav-icon">📅</div>
+                    <span>Activities</span>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <section class="welcome-section">
+                <h1 class="welcome-title">Available <span>Activities</span></h1>
+                <p class="welcome-subtitle">Discover and join exciting club activities across campus</p>
+            </section>
+            
+            <!-- Stats -->
+            <div class="activity-stats">
+                <div class="activity-stat">
+                    <div class="value">12</div>
+                    <div class="label">Total Activities</div>
+                </div>
+                <div class="activity-stat">
+                    <div class="value">8</div>
+                    <div class="label">Upcoming</div>
+                </div>
+                <div class="activity-stat">
+                    <div class="value">3</div>
+                    <div class="label">Your Registrations</div>
+                </div>
+                <div class="activity-stat">
+                    <div class="value">4</div>
+                    <div class="label">Active Now</div>
+                </div>
+            </div>
+            
+            <!-- Activities -->
+            <section class="activities-section">
+                <h2 class="section-title">Available Activities</h2>
+                <div class="activities-grid">
+                    <!-- Activity 1 -->
+                    <div class="activity-card">
+                        <div class="activity-header">
+                            <div class="activity-title">Hackathon 2023</div>
+                            <div class="activity-status upcoming">Upcoming</div>
+                        </div>
+                        <div class="activity-details">
+                            <p><span class="detail-label">Club:</span><span class="detail-value">Computer Science Club</span></p>
+                            <p><span class="detail-label">Date:</span><span class="detail-value">Sat, Nov 25 • 9:00 AM</span></p>
+                            <p><span class="detail-label">Location:</span><span class="detail-value">Engineering Building</span></p>
+                            <p><span class="detail-label">Spots:</span><span class="detail-value">65/100</span></p>
+                        </div>
+                        <div class="activity-description">Annual 48-hour coding competition with industry mentors and prizes for innovative projects.</div>
+                        <div class="activity-actions">
+                            <button class="action-btn details" onclick="document.getElementById('activityModal').classList.add('active')">View Details</button>
+                            <button class="action-btn register" onclick="document.getElementById('confirmationModal').classList.add('active')">Register Now</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Activity 2 -->
+                    <div class="activity-card">
+                        <div class="activity-header">
+                            <div class="activity-title">Debate Competition</div>
+                            <div class="activity-status upcoming">Upcoming</div>
+                        </div>
+                        <div class="activity-details">
+                            <p><span class="detail-label">Club:</span><span class="detail-value">Debate Society</span></p>
+                            <p><span class="detail-label">Date:</span><span class="detail-value">Tue, Dec 5 • 2:00 PM</span></p>
+                            <p><span class="detail-label">Location:</span><span class="detail-value">Student Union Auditorium</span></p>
+                            <p><span class="detail-label">Spots:</span><span class="detail-value">28/50</span></p>
+                        </div>
+                        <div class="activity-description">Inter-university debate competition on contemporary social issues. Open to all skill levels.</div>
+                        <div class="activity-actions">
+                            <button class="action-btn details" onclick="document.getElementById('activityModal').classList.add('active')">View Details</button>
+                            <button class="action-btn register" onclick="document.getElementById('confirmationModal').classList.add('active')">Register Now</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Activity 3 -->
+                    <div class="activity-card">
+                        <div class="activity-header">
+                            <div class="activity-title">Weekly Coding Workshop</div>
+                            <div class="activity-status ongoing">Active Now</div>
+                        </div>
+                        <div class="activity-details">
+                            <p><span class="detail-label">Club:</span><span class="detail-value">Computer Science Club</span></p>
+                            <p><span class="detail-label">Date:</span><span class="detail-value">Today • 4:00 PM</span></p>
+                            <p><span class="detail-label">Location:</span><span class="detail-value">Computer Lab B</span></p>
+                            <p><span class="detail-label">Spots:</span><span class="detail-value">35/40</span></p>
+                        </div>
+                        <div class="activity-description">Learn Python basics with hands-on exercises. Perfect for beginners.</div>
+                        <div class="activity-actions">
+                            <button class="action-btn details" onclick="document.getElementById('activityModal').classList.add('active')">View Details</button>
+                            <button class="action-btn registered" disabled>Registered</button>
+                        </div>
+                    </div>
+
+                    <!-- Activity 4 -->
+                    <div class="activity-card">
+                        <div class="activity-header">
+                            <div class="activity-title">Photography Exhibition</div>
+                            <div class="activity-status upcoming">Upcoming</div>
+                        </div>
+                        <div class="activity-details">
+                            <p><span class="detail-label">Club:</span><span class="detail-value">Photography Club</span></p>
+                            <p><span class="detail-label">Date:</span><span class="detail-value">Tue, Nov 28 • 6:00 PM</span></p>
+                            <p><span class="detail-label">Location:</span><span class="detail-value">Arts Center Gallery</span></p>
+                            <p><span class="detail-label">Spots:</span><span class="detail-value">42/75</span></p>
+                        </div>
+                        <div class="activity-description">Showcasing student photography work from the semester. Guest judge from local art museum.</div>
+                        <div class="activity-actions">
+                            <button class="action-btn details" onclick="document.getElementById('activityModal').classList.add('active')">View Details</button>
+                            <button class="action-btn register" onclick="document.getElementById('confirmationModal').classList.add('active')">Register Now</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <!-- Modals -->
+    <div class="modal" id="activityModal" onclick="if(event.target===this) this.classList.remove('active')">
+        <div class="modal-content">
+            <div class="modal-icon">📋</div>
+            <h2 class="modal-title">Hackathon 2023</h2>
+            <p class="modal-text">Annual 48-hour coding competition with industry mentors and prizes for innovative projects. This event brings together the best programming minds on campus for a weekend of creativity and innovation.</p>
+            <div class="modal-buttons">
+                <button class="modal-btn cancel" onclick="document.getElementById('activityModal').classList.remove('active')">Close</button>
+                <button class="modal-btn confirm" onclick="document.getElementById('activityModal').classList.remove('active'); document.getElementById('confirmationModal').classList.add('active')">Register Now</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="confirmationModal" onclick="if(event.target===this) this.classList.remove('active')">
+        <div class="modal-content">
+            <div class="modal-icon">✅</div>
+            <h2 class="modal-title">Registration Successful!</h2>
+            <p class="modal-text">Your registration for "Hackathon 2023" has been recorded in the system. A confirmation email has been sent to your student email address.</p>
+            <div class="modal-buttons">
+                <button class="modal-btn confirm" onclick="document.getElementById('confirmationModal').classList.remove('active')">Continue Browsing</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="logoutModal" onclick="if(event.target===this) this.classList.remove('active')">
+        <div class="modal-content">
+            <div class="modal-icon">🚪</div>
+            <h2 class="modal-title">Confirm Sign Out</h2>
+            <p class="modal-text">Are you sure you want to sign out of your account?</p>
+            <div class="modal-buttons">
+                <button class="modal-btn cancel" onclick="document.getElementById('logoutModal').classList.remove('active')">Cancel</button>
+                <button class="modal-btn confirm" onclick="document.getElementById('logoutModal').classList.remove('active'); alert('Signed out successfully!')">Sign Out</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.activity-card');
+            cards.forEach((card, i) => {
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 100 + (i * 100));
+            });
+            
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    document.querySelectorAll('.modal.active').forEach(modal => {
+                        modal.classList.remove('active');
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

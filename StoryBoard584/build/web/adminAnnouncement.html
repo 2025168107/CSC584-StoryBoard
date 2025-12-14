@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University Club | Admin Announcements</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        :root {
+            --primary: #8B0000; --primary-dark: #660000; --primary-light: #B22222;
+            --surface: #ffffff; --surface-light: #f8f9fa; --surface-dark: #f1f3f5;
+            --text: #1a1a1a; --text-light: #666666; --border: #e0e0e0;
+            --shadow: 0 8px 30px rgba(0,0,0,0.08); --radius: 12px;
+        }
+        body { background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); color: var(--text); min-height: 100vh; }
+        
+        .app-container { 
+            display: grid; 
+            grid-template-columns: 220px 1fr; 
+            grid-template-rows: 70px 1fr; 
+            min-height: 100vh; 
+        }
+        
+        /* Header */
+        .header { 
+            grid-column: 1 / -1; 
+            background: var(--surface);
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            padding: 0 24px; 
+            border-bottom: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+        .logo-container { display: flex; align-items: center; gap: 12px; }
+        .logo-icon {
+            width: 36px; height: 36px; background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 8px; display: flex; align-items: center; justify-content: center;
+            color: white; font-weight: 800; font-size: 16px;
+        }
+        .logo-text { display: flex; flex-direction: column; }
+        .logo-main { font-size: 18px; font-weight: 800; color: var(--text); }
+        .logo-main span { color: var(--primary); }
+        .logo-sub { font-size: 10px; color: var(--text-light); letter-spacing: 1px; font-weight: 500; }
+        .user-profile { display: flex; align-items: center; gap: 15px; }
+        .profile-badge {
+            display: flex; align-items: center; gap: 10px; padding: 6px 16px;
+            background: var(--surface-light); border-radius: 50px; border: 1px solid var(--border);
+        }
+        .profile-avatar {
+            width: 36px; height: 36px; background: linear-gradient(135deg, var(--primary), #000);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            color: white; font-weight: 700; font-size: 14px;
+        }
+        .admin-badge {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white;
+            padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 600;
+        }
+        .logout-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white;
+            border: none; padding: 8px 20px; border-radius: 6px; cursor: pointer;
+            font-weight: 600; font-size: 13px;
+        }
+        
+        /* Sidebar */
+        .sidebar { 
+            background: var(--surface); padding: 24px 0; border-right: 1px solid var(--border);
+        }
+        .nav-section { margin-bottom: 20px; }
+        .section-label {
+            padding: 0 16px 8px; font-size: 10px; color: var(--text-light);
+            text-transform: uppercase; letter-spacing: 1px; font-weight: 600;
+        }
+        .nav-item { 
+            padding: 12px 16px; color: var(--text-light); display: flex; align-items: center; 
+            gap: 12px; cursor: pointer; margin: 2px 8px; border-radius: 8px;
+        }
+        .nav-item.active { 
+            background: rgba(139, 0, 0, 0.08); color: var(--primary); font-weight: 600;
+            border-left: 3px solid var(--primary);
+        }
+        .nav-icon { width: 18px; text-align: center; }
+        
+        /* Main Content */
+        .main-content { 
+            padding: 24px; 
+            overflow-y: auto; 
+            background: var(--surface-dark); 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .welcome-section { 
+            margin-bottom: 30px; 
+            text-align: center;
+            width: 100%;
+            max-width: 1200px;
+        }
+        .welcome-title { font-size: 26px; font-weight: 800; color: var(--text); margin-bottom: 6px; }
+        .welcome-title span { color: var(--primary); }
+        .welcome-subtitle { color: var(--text-light); font-size: 14px; font-weight: 400; }
+        
+        /* Admin Actions */
+        .admin-actions {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 30px;
+            width: 100%;
+            max-width: 1200px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .action-btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .action-btn.secondary {
+            background: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+        
+        /* Announcement Stats */
+        .announcement-stats {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+            max-width: 1200px;
+        }
+        .announcement-stat {
+            background: var(--surface);
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            min-width: 120px;
+            text-align: center;
+        }
+        .announcement-stat::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+        }
+        .announcement-stat .value {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+        .announcement-stat .label {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+        
+        /* Announcements Management Section */
+        .announcements-section { 
+            background: var(--surface);
+            border-radius: 20px; 
+            padding: 24px; 
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+            width: 100%;
+            max-width: 1200px;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .section-title { 
+            font-size: 20px; 
+            font-weight: 700; 
+            color: var(--text);
+        }
+        
+        /* Announcements Grid */
+        .announcements-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
+            gap: 20px; 
+            justify-items: center;
+        }
+        
+        /* Announcement Cards */
+        .announcement-card { 
+            background: var(--surface);
+            padding: 20px; 
+            border-radius: 12px; 
+            border: 1px solid var(--border);
+            width: 100%;
+            max-width: 350px;
+        }
+        
+        .announcement-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: flex-start; 
+            margin-bottom: 16px; 
+        }
+        
+        .announcement-title { 
+            font-size: 18px; 
+            font-weight: 700; 
+            color: var(--text);
+            flex: 1;
+        }
+        
+        .announcement-status { 
+            background: linear-gradient(135deg, var(--primary), #000);
+            color: white; 
+            padding: 5px 12px; 
+            border-radius: 20px; 
+            font-size: 10px; 
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .announcement-status.published { background: linear-gradient(135deg, #4CAF50, #2E7D32); }
+        .announcement-status.draft { background: linear-gradient(135deg, #FF9800, #F57C00); }
+        .announcement-status.scheduled { background: linear-gradient(135deg, #2196F3, #0D47A1); }
+        
+        .announcement-details { 
+            color: var(--text-light); 
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+        
+        .announcement-details p {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .detail-label {
+            font-weight: 500;
+            color: var(--text-light);
+        }
+        
+        .detail-value {
+            color: var(--text);
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .announcement-content {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+            color: var(--text-light);
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        
+        /* Admin Announcement Actions */
+        .announcement-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+        
+        .announcement-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            flex: 1;
+        }
+        
+        .announcement-btn.edit {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+        
+        .announcement-btn.view {
+            background: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+        
+        .announcement-btn.delete {
+            background: transparent;
+            color: #dc3545;
+            border: 1px solid #dc3545;
+        }
+        
+        /* Scheduled Announcements Table */
+        .scheduled-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .scheduled-table th {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-light);
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+        
+        .scheduled-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text);
+            font-size: 13px;
+        }
+        
+        .table-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .table-btn {
+            padding: 4px 8px;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text-light);
+            font-size: 10px;
+            cursor: pointer;
+        }
+        
+        /* Announcement Form (Display Only) */
+        .announcement-form {
+            background: var(--surface-light);
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            margin-top: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 14px;
+            background: var(--surface);
+        }
+        
+        .form-textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 14px;
+            min-height: 120px;
+            resize: vertical;
+            background: var(--surface);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .app-container { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+            .sidebar { display: none; }
+            .announcements-grid { grid-template-columns: 1fr; }
+            .section-header { flex-direction: column; gap: 16px; }
+            .header { padding: 16px; flex-direction: column; gap: 12px; }
+            .user-profile { width: 100%; justify-content: space-between; }
+            .announcement-card { max-width: 100%; }
+            .announcement-actions { flex-direction: column; }
+            .admin-actions { flex-direction: column; }
+            .scheduled-table { display: block; overflow-x: auto; }
+        }
+        
+        @media (max-width: 480px) {
+            .announcement-stats { justify-content: center; }
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--surface); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo-container">
+                <div class="logo-icon">U</div>
+                <div class="logo-text">
+                    <div class="logo-main">University<span>Club</span></div>
+                    <div class="logo-sub">ADMIN ANNOUNCEMENTS</div>
+                </div>
+            </div>
+            <div class="user-profile">
+                <div class="profile-badge">
+                    <div class="profile-avatar">SA</div>
+                    <div class="profile-info">
+                        <div class="profile-name">Sarah Admin</div>
+                        <div class="admin-badge">Admin</div>
+                    </div>
+                </div>
+                <button class="logout-btn">Sign Out</button>
+            </div>
+        </header>
+        
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="nav-section">
+                <div class="section-label">Navigation</div>
+                <div class="nav-item">
+                    <div class="nav-icon">📊</div>
+                    <span>Dashboard</span>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-icon">📅</div>
+                    <span>Activities</span>
+                </div>
+                <div class="nav-item active">
+                    <div class="nav-icon">📢</div>
+                    <span>Announcements</span>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <section class="welcome-section">
+                <h1 class="welcome-title">Announcements <span>Management</span></h1>
+                <p class="welcome-subtitle">Manage Computer Science Club announcements and communications</p>
+            </section>
+            
+            <!-- Admin Actions -->
+            <div class="admin-actions">
+                <button class="action-btn">
+                    <span>📢</span>
+                    Create New Announcement
+                </button>
+                <button class="action-btn secondary">
+                    <span>📋</span>
+                    View Sent History
+                </button>
+                <button class="action-btn secondary">
+                    <span>📊</span>
+                    Engagement Analytics
+                </button>
+            </div>
+            
+            <!-- Announcement Stats -->
+            <div class="announcement-stats">
+                <div class="announcement-stat">
+                    <div class="value">24</div>
+                    <div class="label">Total Announcements</div>
+                </div>
+                <div class="announcement-stat">
+                    <div class="value">18</div>
+                    <div class="label">Published</div>
+                </div>
+                <div class="announcement-stat">
+                    <div class="value">3</div>
+                    <div class="label">Scheduled</div>
+                </div>
+                <div class="announcement-stat">
+                    <div class="value">85%</div>
+                    <div class="label">Open Rate</div>
+                </div>
+            </div>
+            
+            <!-- Recent Announcements Section -->
+            <section class="announcements-section">
+                <div class="section-header">
+                    <h2 class="section-title">Recent Announcements</h2>
+                    <button class="action-btn">
+                        <span>📢</span>
+                        New Announcement
+                    </button>
+                </div>
+                <div class="announcements-grid">
+                    <!-- Announcement 1 -->
+                    <div class="announcement-card">
+                        <div class="announcement-header">
+                            <div class="announcement-title">Hackathon 2023 Registration Open</div>
+                            <div class="announcement-status published">Published</div>
+                        </div>
+                        <div class="announcement-details">
+                            <p>
+                                <span class="detail-label">Sent:</span>
+                                <span class="detail-value">Nov 5 • 2:30 PM</span>
+                            </p>
+                            <p>
+                                <span class="detail-label">Recipients:</span>
+                                <span class="detail-value">85 members</span>
+                            </p>
+                            <p>
+                                <span class="detail-label">Views:</span>
+                                <span class="detail-value">72</span>
+                            </p>
+                            <p>
+                                <span class="detail-label">Status:</span>
+                                <span class="detail-value">Active</span>
+                            </p>
+                        </div>
+                        <div class="announcement-content">
+                            Registration for our annual 48-hour Hackathon is now open! This year's theme is 'Sustainable Technology Solutions'.
+                        </div>
+                        <div class="announcement-actions">
+                            <button class="announcement-btn edit">Edit</button>
+                            <button class="announcement-btn view">View Stats</button>
+                            <button class="announcement-btn delete">Delete</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Announcement 2 -->
+                    <div class="announcement-card">
+                        <div class="announcement-header">
+                            <div class="announcement-title">Python Workshop Series</div>
+                            <div class="announcement-status published">Published</div>
+                        </div>
+                        <div class="announcement-details">
+                            <p>
+                                <span class="detail-label">Sent:</span>
+                                <span class="detail-value">Nov 12 • 4:20 PM</span>
+                            </p>
+                            <p>
+                                <span class="detail-label">Recipients:</span>
+                                <span class="detail-value">85 members</span>
+                            </p>
+                            <p>
+                                <span class="detail-label">Views:</span>
+                                <span class="detail-value">68</span>
+                            </p>
+                            <p>
+                                <span class="detail-label">Status:</span>
+                                <span class="detail-value">Active</span>
+                            </p>
+                        </div>
+                        <div class="announcement-content">
+                            Starting this week, we're launching a 4-week Python workshop series for beginners. No prior experience required.
+                        </div>
+                        <div class="announcement-actions">
+                            <button class="announcement-btn edit">Edit</button>
+                            <button class="announcement-btn view">View Stats</button>
+                            <button class="announcement-btn delete">Delete</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Announcement 3 -->
+                    <div class="announcement-card">
+                        <div class="announcement-header">
+                            <div class="announcement-title">Club Meeting Reminder</div>
+                            <div class="announcement-status scheduled">Scheduled</div>
+                        </div>
+                        <div class="announcement-details">
+                            <p>
+                                <span class="detail-label">Scheduled:</span>
+                                <span class="detail-value">Nov 30 • 10:00 AM</span>
+                            </p>
+                            <p>
+                                <span class="detail-label">Recipients:</span>
+                                <span class="detail-value">85 members</span>
+                            </p>
+                            <p>
+                                <span class="detail-label">Status:</span>
+                                <span class="detail-value">Scheduled</span>
+                            </p>
+                            <p>
+                                <span class="detail-label">Type:</span>
+                                <span class="detail-value">Reminder</span>
+                            </p>
+                        </div>
+                        <div class="announcement-content">
+                            Monthly club meeting reminder. Agenda includes upcoming events planning and budget review.
+                        </div>
+                        <div class="announcement-actions">
+                            <button class="announcement-btn edit">Edit</button>
+                            <button class="announcement-btn view">Reschedule</button>
+                            <button class="announcement-btn delete">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Create Announcement Form -->
+            <section class="announcements-section">
+                <div class="section-header">
+                    <h2 class="section-title">Create New Announcement</h2>
+                </div>
+                <div class="announcement-form">
+                    <div class="form-group">
+                        <label class="form-label">Announcement Title</label>
+                        <input type="text" class="form-input" value="AI Seminar Announcement">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Announcement Content</label>
+                        <textarea class="form-textarea">We're excited to announce an exclusive AI seminar featuring industry expert Dr. Michael Chen. Learn about the latest trends in artificial intelligence and machine learning.</textarea>
+                    </div>
+                    <div style="display: flex; gap: 16px; margin-top: 20px;">
+                        <button class="action-btn" style="flex: 1;">Publish Now</button>
+                        <button class="action-btn secondary" style="flex: 1;">Schedule</button>
+                        <button class="action-btn secondary" style="flex: 1;">Save Draft</button>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Scheduled Announcements Table -->
+            <section class="announcements-section">
+                <div class="section-header">
+                    <h2 class="section-title">Scheduled Announcements</h2>
+                    <button class="action-btn secondary">
+                        <span>📋</span>
+                        View All
+                    </button>
+                </div>
+                <table class="scheduled-table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Scheduled Date</th>
+                            <th>Recipients</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Club Meeting Reminder</td>
+                            <td>Nov 30, 10:00 AM</td>
+                            <td>85 members</td>
+                            <td>Reminder</td>
+                            <td><span style="color:#2196F3">Scheduled</span></td>
+                            <td>
+                                <div class="table-actions">
+                                    <button class="table-btn">Edit</button>
+                                    <button class="table-btn">Cancel</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>December Events Calendar</td>
+                            <td>Dec 1, 9:00 AM</td>
+                            <td>85 members</td>
+                            <td>Newsletter</td>
+                            <td><span style="color:#2196F3">Scheduled</span></td>
+                            <td>
+                                <div class="table-actions">
+                                    <button class="table-btn">Edit</button>
+                                    <button class="table-btn">Cancel</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Winter Break Notice</td>
+                            <td>Dec 15, 3:00 PM</td>
+                            <td>85 members</td>
+                            <td>Notice</td>
+                            <td><span style="color:#2196F3">Scheduled</span></td>
+                            <td>
+                                <div class="table-actions">
+                                    <button class="table-btn">Edit</button>
+                                    <button class="table-btn">Cancel</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

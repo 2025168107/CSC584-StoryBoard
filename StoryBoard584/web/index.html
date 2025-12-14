@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University Club | Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+
+        body {
+            background: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 20px;
+            padding: 48px 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e9ecef;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 36px;
+        }
+
+        .logo-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, #8B0000, #B22222);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .logo h1 {
+            color: #1a1a1a;
+            font-size: 28px;
+            margin-bottom: 6px;
+        }
+
+        .logo p {
+            color: #666;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .welcome-text {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .welcome-text h2 {
+            color: #1a1a1a;
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .welcome-text p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #444;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            color: #1a1a1a;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #8B0000;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(139, 0, 0, 0.1);
+        }
+
+        .form-input::placeholder {
+            color: #999;
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 28px 0 32px;
+        }
+
+        .remember {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #555;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .checkbox {
+            width: 18px;
+            height: 18px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .checkbox.checked {
+            background: #8B0000;
+            border-color: #8B0000;
+        }
+
+        .checkbox.checked::after {
+            content: '✓';
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .forgot-link {
+            color: #8B0000;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .forgot-link:hover {
+            color: #B22222;
+            text-decoration: underline;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #8B0000, #B22222);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(139, 0, 0, 0.2);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .login-btn.loading {
+            position: relative;
+            color: transparent;
+        }
+
+        .login-btn.loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 32px;
+            border-top: 1px solid #f0f0f0;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .footer a {
+            color: #8B0000;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .alert {
+            border-radius: 10px;
+            padding: 14px 18px;
+            margin-bottom: 24px;
+            font-size: 14px;
+            display: none;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .alert.error {
+            background: #ffe6e6;
+            border: 1px solid #ffb3b3;
+            color: #cc0000;
+        }
+
+        .alert.success {
+            background: #e6ffe6;
+            border: 1px solid #b3ffb3;
+            color: #006600;
+        }
+
+        .alert-icon {
+            font-size: 16px;
+        }
+
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 36px 24px;
+            }
+            
+            .logo h1 {
+                font-size: 24px;
+            }
+            
+            .welcome-text h2 {
+                font-size: 20px;
+            }
+            
+            .form-options {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="logo">
+                <div class="logo-icon">U</div>
+                <h1>University Club</h1>
+                <p>Student Portal</p>
+            </div>
+
+            <div class="welcome-text">
+                <h2>Welcome Back</h2>
+                <p>Sign in to access your club dashboard and manage memberships</p>
+            </div>
+
+            <div class="alert error" id="errorAlert">
+                <span class="alert-icon">⚠️</span>
+                <span id="errorText">Invalid credentials. Please try again.</span>
+            </div>
+
+            <div class="alert success" id="successAlert">
+                <span class="alert-icon">✅</span>
+                <span>Login successful! Redirecting...</span>
+            </div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">Student Email</label>
+                    <input type="email" id="email" class="form-input" placeholder="student@university.edu" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" class="form-input" placeholder="Enter your password" required>
+                </div>
+
+                <div class="form-options">
+                    <div class="remember" id="rememberBtn">
+                        <div class="checkbox" id="checkbox"></div>
+                        <span>Remember me</span>
+                    </div>
+                    <a href="#" class="forgot-link" id="forgotLink">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="login-btn" id="loginBtn">Sign In</button>
+            </form>
+
+            <div class="footer">
+                <p>Don't have an account? <a href="#">Contact administration</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Remember me functionality
+        const rememberBtn = document.getElementById('rememberBtn');
+        const checkbox = document.getElementById('checkbox');
+        
+        rememberBtn.addEventListener('click', () => {
+            checkbox.classList.toggle('checked');
+        });
+
+        // Load saved credentials
+        window.addEventListener('load', () => {
+            const savedEmail = localStorage.getItem('savedEmail');
+            const savedPassword = localStorage.getItem('savedPassword');
+            
+            if (savedEmail) {
+                document.getElementById('email').value = savedEmail;
+                document.getElementById('password').value = savedPassword || '';
+                checkbox.classList.add('checked');
+            }
+        });
+
+        // Form submission
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const loginBtn = document.getElementById('loginBtn');
+            const errorAlert = document.getElementById('errorAlert');
+            const successAlert = document.getElementById('successAlert');
+            const remember = checkbox.classList.contains('checked');
+
+            // Hide alerts
+            errorAlert.style.display = 'none';
+            successAlert.style.display = 'none';
+
+            // Validation
+            if (!email || !password) {
+                document.getElementById('errorText').textContent = 'Please fill in all fields.';
+                errorAlert.style.display = 'flex';
+                return;
+            }
+
+            if (!email.includes('@')) {
+                document.getElementById('errorText').textContent = 'Please enter a valid email address.';
+                errorAlert.style.display = 'flex';
+                return;
+            }
+
+            // Show loading
+            loginBtn.classList.add('loading');
+            loginBtn.disabled = true;
+
+            // Simulate API call
+            await new Promise(resolve => setTimeout(resolve, 1200));
+
+            // Demo credentials
+            const validUsers = [
+                { email: 'john.doe@university.edu', password: 'password123' },
+                { email: 'admin@university.edu', password: 'admin123' },
+                { email: 'student@university.edu', password: 'student123' }
+            ];
+
+            const isValid = validUsers.some(user => 
+                user.email === email && user.password === password
+            );
+
+            if (isValid) {
+                // Save if remember me is checked
+                if (remember) {
+                    localStorage.setItem('savedEmail', email);
+                    localStorage.setItem('savedPassword', password);
+                } else {
+                    localStorage.removeItem('savedEmail');
+                    localStorage.removeItem('savedPassword');
+                }
+
+                // Show success
+                successAlert.style.display = 'flex';
+
+                // Redirect simulation
+                setTimeout(() => {
+                    alert('Login successful! Redirecting to dashboard...\n\nDemo credentials used:\n' + 
+                          email + ' / ' + password + '\n\nIn a real app, you would be redirected.');
+                    
+                    loginBtn.classList.remove('loading');
+                    loginBtn.disabled = false;
+                    
+                    // Reset form for demo
+                    if (!remember) {
+                        document.getElementById('loginForm').reset();
+                        checkbox.classList.remove('checked');
+                    }
+                    successAlert.style.display = 'none';
+                    
+                }, 1000);
+            } else {
+                document.getElementById('errorText').textContent = 'Invalid email or password.';
+                errorAlert.style.display = 'flex';
+                loginBtn.classList.remove('loading');
+                loginBtn.disabled = false;
+            }
+        });
+
+        // Forgot password
+        document.getElementById('forgotLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value || 'your email';
+            alert(`Password reset instructions would be sent to:\n${email}\n\nFor demo: Contact support@university.edu`);
+        });
+
+        // Console demo hint
+        setTimeout(() => {
+            console.log('Demo credentials:\n' +
+                '• john.doe@university.edu / password123\n' +
+                '• admin@university.edu / admin123\n' + 
+                '• student@university.edu / student123');
+        }, 1000);
+    </script>
+</body>
+</html>
